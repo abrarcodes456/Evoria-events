@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Book Now - EVORIA Events{% endblock %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+<div style="background:var(--primary);padding:60px 32px;text-align:center;border-bottom:1px solid rgba(232,165,152,0.2);">
+    <p style="color:var(--rose);font-size:10px;letter-spacing:4px;font-weight:500;margin-bottom:12px;">RESERVE YOUR DATE</p>
+    <h1 style="font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--white);">
+        Book <span style="color:var(--rose);">EVORIA Events</span>
+    </h1>
+    <div style="height:1px;width:60px;background:var(--rose);margin:16px auto 0;opacity:0.5;"></div>
+</div>
+
+<!-- BOOKING FORM -->
+<div style="background:var(--off-white);padding:48px 32px;">
+    <div style="max-width:640px;margin:0 auto;">
+
+        <div class="form-container">
+
+            <h2 class="form-title">Event Details</h2>
+            <p class="form-subtitle">Fill in your event details and we'll confirm within 24 hours!</p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- EVENT TYPE -->
+               <div class="form-group">
+                    <label>Event Type</label>
+                    <select name="event_type" required onchange="autoFillEventName(this)">
+                        <option value="" disabled selected>Select your event type</option>
+                        {% for value, label in event_types %}
+                            <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- EVENT NAME -->
+                <div class="form-group">
+                    <label>Event Name</label>
+                    <input type="text"
+                        name="event_name"
+                        placeholder="e.g. Priya & Karthik Wedding"
+                        required>
+                </div>
+
+                <!-- EVENT DATE -->
+                <div class="form-group">
+                    <label>Event Date</label>
+                    <input type="date"
+                        name="event_date"
+                        required>
+                </div>
+
+                <!-- GUEST COUNT -->
+                <div class="form-group">
+                    <label>Number of Guests</label>
+                    <input type="number"
+                        name="guest_count"
+                        placeholder="e.g. 200"
+                        min="1"
+                        max="5000"
+                        required>
+                </div>
+
+                <!-- PHONE -->
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel"
+                        name="phone"
+                        placeholder="+91 XXXXX XXXXX"
+                        required>
+                </div>
+
+                <!-- CATERING TOGGLE -->
+                <div class="form-group">
+                    <label>Catering Service</label>
+                    <div class="toggle-container">
+                        <label class="toggle-switch">
+                            <input type="checkbox"
+                                name="catering"
+                                id="cateringToggle"
+                                onchange="updatePrice()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">Add Catering Service</span>
+                        <span class="toggle-price-change" id="cateringExtra">+₹20,000</span>
+                    </div>
+                </div>
+
+                <!-- PRICE DISPLAY -->
+                <div class="price-display">
+                    <p style="color:var(--gray);font-size:11px;letter-spacing:2px;margin-bottom:8px;">TOTAL AMOUNT</p>
+                    <p class="price-amount" id="priceDisplay">₹35,000</p>
+                    <p class="price-label" id="priceLabel">Venue only — catering not included</p>
+                </div>
+
+                <!-- SPECIAL REQUESTS -->
+                <div class="form-group" style="margin-top:16px;">
+                    <label>Special Requests (Optional)</label>
+                    <textarea name="special_requests"
+                        placeholder="Any special arrangements, decorations, dietary requirements..."
+                        rows="3"></textarea>
+                </div>
+
+                <!-- SUBMIT -->
+                {% if user.is_authenticated %}
+                    <button type="submit" class="btn-submit">
+                        Confirm Booking Request →
+                    </button>
+                {% else %}
+                    <a href="{% url 'login' %}"
+                        style="display:block;background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:var(--dark-text);padding:12px;border-radius:6px;font-size:14px;font-weight:700;text-align:center;text-decoration:none;margin-top:8px;">
+                        Login to Book →
+                    </a>
+                    <p style="text-align:center;color:var(--gray);font-size:12px;margin-top:8px;">
+                        Don't have an account?
+                        <a href="{% url 'register' %}" style="color:var(--rose-dark);font-weight:600;">Register here</a>
+                    </p>
+                {% endif %}
+
+            </form>
+
+        </div>
+
+        <!-- BOOKING INFO -->
+        <div style="margin-top:24px;background:var(--primary);border-radius:12px;padding:24px;border:1px solid rgba(232,165,152,0.2);">
+            <h3 style="font-family:'Playfair Display',serif;font-size:16px;color:var(--rose);margin-bottom:16px;">What's Included</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <span style="color:var(--rose);">✓</span>
+                    <span style="color:#ccc;font-size:12px;">Grand Main Hall</span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <span style="color:var(--rose);">✓</span>
+                    <span style="color:#ccc;font-size:12px;">Parking Area</span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <span style="color:var(--rose);">✓</span>
+                    <span style="color:#ccc;font-size:12px;">Sound & Stage</span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <span style="color:var(--rose);">✓</span>
+                    <span style="color:#ccc;font-size:12px;">Full AC</span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <span style="color:var(--rose);">✓</span>
+                    <span style="color:#ccc;font-size:12px;">Security Staff</span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <span style="color:var(--rose);">✓</span>
+                    <span style="color:#ccc;font-size:12px;">24/7 CCTV</span>
+                </div>
+            </div>
+            <div style="border-top:1px solid rgba(232,165,152,0.15);margin-top:16px;padding-top:16px;">
+                <p style="color:var(--gray);font-size:11px;line-height:1.7;">
+                    ⚡ We confirm bookings within 24 hours<br>
+                    📞 Questions? Call us: +91 63795 95388<br>
+                    ❌ Cancellation available before confirmation
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Base price without catering
+    const BASE_PRICE = 35000;
+    // Extra price for catering
+    const CATERING_PRICE = 20000;
+
+    function updatePrice() {
+        const cateringToggle = document.getElementById('cateringToggle');
+        const priceDisplay = document.getElementById('priceDisplay');
+        const priceLabel = document.getElementById('priceLabel');
+
+        if (cateringToggle.checked) {
+            // Catering ON
+            const total = BASE_PRICE + CATERING_PRICE;
+            priceDisplay.textContent = '₹' + total.toLocaleString('en-IN');
+            priceLabel.textContent = 'Venue + Full Catering Service included';
+        } else {
+            // Catering OFF
+            priceDisplay.textContent = '₹' + BASE_PRICE.toLocaleString('en-IN');
+            priceLabel.textContent = 'Venue only — catering not included';
+        }
+    }
+
+    function autoFillEventName(select) 
+    {
+        const selectedText = select.options[select.selectedIndex].text;
+        const eventNameField = document.querySelector('input[name="event_name"]');
+        eventNameField.value = selectedText;
+        
+    }
+    // Set minimum date to today
+    const dateInput = document.querySelector('input[type="date"]');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', today);
+</script>
+{% endblock %}

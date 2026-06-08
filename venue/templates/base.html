@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EVORIA Events{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <!-- LOGO -->
+        <a href="{% url 'home' %}" class="navbar-brand">
+            <svg width="28" height="28" viewBox="0 0 50 50">
+                <path d="M6,42 L6,20 L18,30 L25,6 L32,30 L44,20 L44,42 Z"
+                    fill="none" stroke="#E8A598" stroke-width="2.5"
+                    stroke-linejoin="round" stroke-linecap="round"/>
+                <rect x="6" y="42" width="38" height="6" rx="2" fill="#E8A598"/>
+                <circle cx="6" cy="20" r="3.5" fill="#E8A598"/>
+                <circle cx="25" cy="6" r="3.5" fill="#E8A598"/>
+                <circle cx="44" cy="20" r="3.5" fill="#E8A598"/>
+            </svg>
+            EVORIA <span>EVENTS</span>
+        </a>
+
+        <!-- NAV LINKS -->
+        <ul class="navbar-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+            {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                    <li><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+                    <li><a href="{% url 'admin_messages' %}">Messages</a></li>
+                {% else %}
+                    <li><a href="{% url 'my_bookings' %}">My Bookings</a></li>
+                {% endif %}
+                <li><a href="{% url 'logout' %}" class="btn-rose">Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'book' %}" class="btn-rose">Book Now</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- MESSAGES -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- PAGE CONTENT -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-brand">
+            EVORIA <span>EVENTS</span>
+        </div>
+        <div class="footer-text">
+            © 2026 EVORIA Events, Theni, Tamil Nadu. All rights reserved.
+        </div>
+        <div class="footer-text">
+            Made with love....
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

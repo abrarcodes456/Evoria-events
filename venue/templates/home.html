@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - EVORIA Events{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<div class="hero">
+
+    <!-- SLIDING IMAGES -->
+    <div class="carousel" id="carousel">
+    <div class="carousel-slide" style="background-image:url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1600&q=80');background-size:cover;background-position:center;"></div>
+    <div class="carousel-slide" style="background-image:url('https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=1600&q=80');background-size:cover;background-position:center;"></div>
+    <div class="carousel-slide" style="background-image:url('https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=1600&q=80');background-size:cover;background-position:center;"></div>
+    <div class="carousel-slide" style="background-image:url('https://images.unsplash.com/photo-1507504031003-b417219a0fde?w=1600&q=80');background-size:cover;background-position:center;"></div>
+    <div class="carousel-slide" style="background-image:url('https://images.unsplash.com/photo-1531058020387-3be344556be6?w=1600&q=80');background-size:cover;background-position:center;"></div>
+
+
+    <!-- OVERLAY -->
+    <div class="hero-overlay"></div>
+
+    <!-- BLUR BOTTOM -->
+    <div class="hero-blur"></div>
+
+    <!-- HERO TEXT -->
+    <div class="hero-content">
+        <p class="hero-tag">✦ PREMIUM VENUE BOOKING — THENI, TAMIL NADU ✦</p>
+        <h1 class="hero-h1">
+            Where Every Moment<br>
+            <span>Becomes a Memory</span>
+        </h1>
+        <p class="hero-sub">
+            Book our grand venue for marriages, birthdays, college functions,
+            corporate events and all celebrations.
+            Catering available on request.
+        </p>
+        <a href="{% url 'book' %}" class="hero-btn">Book Your Event Now</a>
+    </div>
+
+    <!-- CAROUSEL DOTS -->
+    <div class="carousel-dots">
+        <button class="dot active" onclick="goTo(0)"></button>
+        <button class="dot" onclick="goTo(1)"></button>
+        <button class="dot" onclick="goTo(2)"></button>
+        <button class="dot" onclick="goTo(3)"></button>
+        <button class="dot" onclick="goTo(4)"></button>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let current = 0;
+    const total = 5;
+    const carousel = document.getElementById('carousel');
+    const dots = document.querySelectorAll('.dot');
+
+    function goTo(n) {
+        current = n;
+        carousel.style.transform = `translateX(-${current * 100}%)`;
+        dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    }
+
+    // Auto slide every 3 seconds
+    setInterval(() => {
+        goTo((current + 1) % total);
+    }, 3000);
+</script>
+{% endblock %}

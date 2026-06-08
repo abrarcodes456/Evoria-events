@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Messages - EVORIA Admin{% endblock %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+<div style="background:var(--primary);padding:60px 32px;text-align:center;border-bottom:1px solid rgba(232,165,152,0.2);">
+    <p style="color:var(--rose);font-size:10px;letter-spacing:4px;font-weight:500;margin-bottom:12px;">ADMIN PANEL</p>
+    <h1 style="font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--white);">
+        Contact <span style="color:var(--rose);">Messages</span>
+    </h1>
+    {% if unread_count > 0 %}
+    <div style="display:inline-block;background:var(--rose-dark);color:var(--white);padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;margin-top:12px;">
+        {{ unread_count }} New Message{{ unread_count|pluralize }}
+    </div>
+    {% endif %}
+    <div style="height:1px;width:60px;background:var(--rose);margin:16px auto 0;opacity:0.5;"></div>
+</div>
+
+<!-- MESSAGES LIST -->
+<div style="background:var(--off-white);padding:48px 32px;min-height:60vh;">
+    <div style="max-width:900px;margin:0 auto;">
+
+        <!-- BACK BUTTON -->
+        <a href="{% url 'admin_dashboard' %}"
+            style="display:inline-flex;align-items:center;gap:8px;color:var(--rose-dark);text-decoration:none;font-size:13px;font-weight:600;margin-bottom:24px;">
+            ← Back to Dashboard
+        </a>
+
+        {% if all_messages %}
+        {% for msg in all_messages %}
+        <div style="background:var(--white);border:1px solid #f0e8e6;border-radius:12px;padding:24px;margin-bottom:16px;box-shadow:0 2px 10px rgba(196,125,110,0.06);">
+
+            <!-- TOP ROW -->
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+                <div>
+                    <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--dark-text);margin-bottom:4px;">
+                        {{ msg.subject }}
+                    </h3>
+                    <p style="color:var(--gray);font-size:12px;">
+                        Received on {{ msg.created_at|date:"d M Y, h:i A" }}
+                    </p>
+                </div>
+                {% if msg.is_read %}
+                <span style="background:rgba(46,204,113,0.1);color:var(--success);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;">
+                    ✅ Read
+                </span>
+                {% else %}
+                <span style="background:rgba(232,165,152,0.15);color:var(--rose-dark);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;">
+                    🔵 New
+                </span>
+                {% endif %}
+            </div>
+
+            <!-- DIVIDER -->
+            <div style="height:1px;background:#f0e8e6;margin-bottom:16px;"></div>
+
+            <!-- SENDER DETAILS -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:16px;">
+                <div>
+                    <p style="color:var(--gray);font-size:10px;letter-spacing:1px;margin-bottom:4px;">FROM</p>
+                    <p style="color:var(--dark-text);font-size:13px;font-weight:600;">{{ msg.name }}</p>
+                </div>
+                <div>
+                    <p style="color:var(--gray);font-size:10px;letter-spacing:1px;margin-bottom:4px;">EMAIL</p>
+                    <p style="color:var(--dark-text);font-size:13px;font-weight:600;">{{ msg.email }}</p>
+                </div>
+                <div>
+                    <p style="color:var(--gray);font-size:10px;letter-spacing:1px;margin-bottom:4px;">PHONE</p>
+                    <p style="color:var(--dark-text);font-size:13px;font-weight:600;">{{ msg.phone }}</p>
+                </div>
+            </div>
+
+            <!-- MESSAGE -->
+            <div style="background:var(--off-white);border-radius:8px;padding:14px 16px;border-left:3px solid var(--rose);">
+                <p style="color:var(--gray);font-size:10px;letter-spacing:1px;margin-bottom:6px;">MESSAGE</p>
+                <p style="color:var(--dark-text);font-size:13px;line-height:1.7;">{{ msg.message }}</p>
+            </div>
+
+        </div>
+        {% endfor %}
+
+        {% else %}
+        <!-- NO MESSAGES -->
+        <div style="text-align:center;padding:80px 32px;">
+            <div style="font-size:5rem;margin-bottom:16px;">📭</div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gray);margin-bottom:12px;">
+                No Messages Yet
+            </h3>
+            <p style="color:var(--gray);font-size:14px;">
+                No contact messages received yet!
+            </p>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

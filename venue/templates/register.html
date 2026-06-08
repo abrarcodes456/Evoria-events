@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register - EVORIA Events{% endblock %}
+
+{% block content %}
+
+<div style="background:var(--off-white);min-height:80vh;padding:48px 32px;display:flex;align-items:center;justify-content:center;">
+
+    <div class="form-container">
+
+        <!-- LOGO -->
+        <div style="text-align:center;margin-bottom:24px;">
+            <svg width="48" height="48" viewBox="0 0 50 50">
+                <path d="M6,42 L6,20 L18,30 L25,6 L32,30 L44,20 L44,42 Z"
+                    fill="none" stroke="#C47D6E" stroke-width="2.5"
+                    stroke-linejoin="round" stroke-linecap="round"/>
+                <rect x="6" y="42" width="38" height="6" rx="2" fill="#C47D6E"/>
+                <circle cx="6" cy="20" r="3.5" fill="#C47D6E"/>
+                <circle cx="25" cy="6" r="3.5" fill="#C47D6E"/>
+                <circle cx="44" cy="20" r="3.5" fill="#C47D6E"/>
+            </svg>
+        </div>
+
+        <h2 class="form-title">Create Account</h2>
+        <p class="form-subtitle">Join EVORIA Events and start booking!</p>
+
+        <!-- ERROR MESSAGE -->
+        {% if error %}
+        <div style="background:rgba(231,76,60,0.1);border-left:3px solid var(--danger);padding:10px 14px;border-radius:6px;margin-bottom:16px;">
+            <p style="color:var(--danger);font-size:12px;">❌ {{ error }}</p>
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- USERNAME -->
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text"
+                    name="username"
+                    placeholder="Choose a username e.g. name123"
+                    required>
+            </div>
+
+            <!-- FIRST NAME -->
+            <div class="form-group">
+                <label>First Name</label>
+                <input type="text"
+                    name="first_name"
+                    placeholder="Enter your first name"
+                    required>
+            </div>
+
+            <!-- LAST NAME -->
+            <div class="form-group">
+                <label>Last Name</label>
+                <input type="text"
+                    name="last_name"
+                    placeholder="Enter your last name">
+            </div>
+
+            <!-- EMAIL -->
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required>
+            </div>
+
+            <!-- PHONE -->
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel"
+                    name="phone"
+                    placeholder="+91 XXXXX XXXXX"
+                    maxlength="15"
+                    required>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password"
+                    name="password1"
+                    placeholder="Create a strong password"
+                    required>
+            </div>
+
+            <!-- CONFIRM PASSWORD -->
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password"
+                    name="password2"
+                    placeholder="Confirm your password"
+                    required>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                Create Account →
+            </button>
+
+        </form>
+
+        <p class="form-link">
+            Already have an account?
+            <a href="{% url 'login' %}">Login here</a>
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

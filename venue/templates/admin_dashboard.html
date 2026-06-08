@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - EVORIA Events{% endblock %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+<div style="background:var(--primary);padding:60px 32px;text-align:center;border-bottom:1px solid rgba(232,165,152,0.2);">
+    <p style="color:var(--rose);font-size:10px;letter-spacing:4px;font-weight:500;margin-bottom:12px;">ADMIN PANEL</p>
+    <h1 style="font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--white);">
+        Welcome, <span style="color:var(--rose);">{{ user.first_name }}!</span>
+    </h1>
+    <p style="color:#888;font-size:13px;margin-top:8px;">Here's your venue overview for today</p>
+    <div style="height:1px;width:60px;background:var(--rose);margin:16px auto 0;opacity:0.5;"></div>
+</div>
+
+<div style="background:var(--off-white);padding:48px 32px;">
+    <div style="max-width:1100px;margin:0 auto;">
+
+        <!-- STATS GRID -->
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-number">{{ total_users }}</div>
+                <div class="stat-label">👥 Total Users</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-number">{{ total_bookings }}</div>
+                <div class="stat-label">📋 Total Bookings</div>
+            </div>
+
+            <div class="stat-card" style="border-color:rgba(243,156,18,0.3);">
+                <div class="stat-number" style="color:var(--warning);">{{ pending_bookings }}</div>
+                <div class="stat-label">⏳ Pending Approval</div>
+            </div>
+
+            <div class="stat-card" style="border-color:rgba(46,204,113,0.3);">
+                <div class="stat-number" style="color:var(--success);">{{ confirmed_bookings }}</div>
+                <div class="stat-label">✅ Confirmed</div>
+            </div>
+
+            <div class="stat-card" style="border-color:rgba(52,152,219,0.3);">
+                <div class="stat-number" style="color:#3498DB;">{{ upcoming_bookings }}</div>
+                <div class="stat-label">🗓️ Upcoming Events</div>
+            </div>
+
+            <div class="stat-card" style="border-color:rgba(196,125,110,0.3);">
+                <div class="stat-number" style="color:var(--rose-dark);">{{ completed_bookings }}</div>
+                <div class="stat-label">🎉 Completed Events</div>
+            </div>
+
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div style="display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap;">
+            <a href="{% url 'admin_dashboard' %}"
+                style="background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:var(--dark-text);padding:10px 24px;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;">
+                📋 Manage All Bookings
+            </a>
+        </div>
+
+        <!-- RECENT BOOKINGS TABLE -->
+        <div style="background:var(--white);border:1px solid #f0e8e6;border-radius:12px;overflow:hidden;margin-bottom:32px;">
+            <div style="padding:20px 24px;border-bottom:1px solid #f0e8e6;display:flex;justify-content:space-between;align-items:center;">
+                <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--dark-text);">Recent Bookings</h3>
+                <a href="{% url 'admin_dashboard' %}" style="color:var(--rose-dark);font-size:12px;text-decoration:none;font-weight:600;">View All →</a>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Customer</th>
+                        <th>Event Name</th>
+                        <th>Event Type</th>
+                        <th>Date</th>
+                        <th>Guests</th>
+                        <th>Catering</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in recent_bookings %}
+                    <tr>
+                        <td>{{ booking.id }}</td>
+                        <td>
+                            <p style="color:var(--dark-text);font-weight:600;font-size:13px;">{{ booking.user.get_full_name }}</p>
+                            <p style="font-size:11px;">{{ booking.user.email }}</p>
+                        </td>
+                        <td style="color:var(--dark-text);font-weight:500;">{{ booking.event_name }}</td>
+                        <td>{{ booking.get_event_type_display }}</td>
+                        <td>{{ booking.event_date|date:"d M Y" }}</td>
+                        <td>{{ booking.guest_count }}</td>
+                        <td>
+                            {% if booking.catering %}
+                                <span style="color:var(--success);font-size:12px;font-weight:600;">✅ Yes</span>
+                            {% else %}
+                                <span style="color:var(--gray);font-size:12px;">❌ No</span>
+                            {% endif %}
+                        </td>
+                        <td style="color:var(--rose-dark);font-weight:700;">₹{{ booking.total_price|floatformat:0 }}</td>
+                        <td>
+                            <span class="badge badge-{{ booking.status }}">
+                                {{ booking.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <form method="post" action="{% url 'update_status' booking.id %}">
+                                {% csrf_token %}
+                                <select name="status"
+                                    onchange="this.form.submit()"
+                                    style="background:var(--off-white);border:1px solid #e8d8d4;color:var(--dark-text);padding:5px 8px;border-radius:4px;font-family:'Poppins',sans-serif;font-size:11px;cursor:pointer;">
+                                    <option value="pending" {% if booking.status == 'pending' %}selected{% endif %}>Pending</option>
+                                    <option value="confirmed" {% if booking.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                    <option value="completed" {% if booking.status == 'completed' %}selected{% endif %}>Completed</option>
+                                    <option value="cancelled" {% if booking.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                </select>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" style="text-align:center;padding:40px;color:var(--gray);">
+                            No bookings yet!
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ALL USERS TABLE -->
+        <div style="background:var(--white);border:1px solid #f0e8e6;border-radius:12px;overflow:hidden;">
+            <div style="padding:20px 24px;border-bottom:1px solid #f0e8e6;">
+                <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--dark-text);">Registered Users</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Joined</th>
+                        <th>Total Bookings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in all_users %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td style="color:var(--dark-text);font-weight:600;">{{ u.get_full_name }}</td>
+                        <td>{{ u.email }}</td>
+                        <td>{{ u.userprofile.phone }}</td>
+                        <td>{{ u.date_joined|date:"d M Y" }}</td>
+                        <td>
+                            <span style="background:rgba(196,125,110,0.1);color:var(--rose-dark);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;">
+                                {{ u.booking_set.count }} Bookings
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align:center;padding:40px;color:var(--gray);">
+                            No users registered yet!
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
