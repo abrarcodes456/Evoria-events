@@ -149,7 +149,7 @@ python manage.py runserver
 
 ## 🌐 Live Demo
 
-🔗 **[View Live App](#)** *(Deploying soon on Railway.app)*
+🔗 **[View Live App](https://evoria-events.onrender.com)**
 
 ---
 
