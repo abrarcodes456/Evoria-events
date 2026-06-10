@@ -94,56 +94,29 @@ def register_view(request):
 # ── 4. LOGIN VIEW ─────────────────────────────────────
 def login_view(request):
 
-    # If already logged in → send to home
     if request.user.is_authenticated:
         return redirect('home')
 
-    # If user submitted form
     if request.method == 'POST':
-
-        # Get email and password from form
-        email = request.POST.get('email')
+        username = request.POST.get('username')
         password = request.POST.get('password')
 
-        # Find user by email
         try:
-            username = request.POST.get('username')
-            auth_user = authenticate(
-            request,
-            username=username,
-            password=password
-            )
-            if auth_user is not None:
-                # Password correct → login!
-                login(request, auth_user)
+            user_obj = User.objects.get(username=username)
+            auth_user = authenticate(request, username=user_obj.username, password=password)
 
-                # If admin → go to dashboard
+            if auth_user is not None:
+                login(request, auth_user)
                 if auth_user.is_staff:
                     return redirect('admin_dashboard')
-
-                # If normal user → go to home
                 messages.success(request, f'Welcome back, {auth_user.first_name}!')
                 return redirect('home')
-
             else:
-                # Wrong password
-                return render(request, 'login.html', {
-                    'error': 'Incorrect password! Please try again.'
-                })
+                return render(request, 'login.html', {'error': 'Incorrect password!'})
 
         except User.DoesNotExist:
-            if auth_user is not None:
-                login(request, auth_user)
-                if auth_user.is_staff:
-                    return redirect('admin_dashboard')
-                messages.success(request, f'Welcome back, {auth_user.first_name}!')
-                return redirect('home')
-            else:
-                return render(request, 'login.html', {
-                    'error': 'Invalid username or password!'
-    })
+            return render(request, 'login.html', {'error': 'No account found with this username!'})
 
-    # GET request → show empty login form
     return render(request, 'login.html')
 
 # ── 5. LOGOUT VIEW ────────────────────────────────────
