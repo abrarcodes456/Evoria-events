@@ -98,11 +98,11 @@ def login_view(request):
         return redirect('home')
 
     if request.method == 'POST':
-        username = request.POST.get('username')
+        mail = request.POST.get('username')
         password = request.POST.get('password')
 
         try:
-            user_obj = User.objects.get(username=username)
+            user_obj = User.objects.get(email=mail)
             auth_user = authenticate(request, username=user_obj.username, password=password)
 
             if auth_user is not None:
@@ -115,7 +115,7 @@ def login_view(request):
                 return render(request, 'login.html', {'error': 'Incorrect password!'})
 
         except User.DoesNotExist:
-            return render(request, 'login.html', {'error': 'No account found with this username!'})
+            return render(request, 'login.html', {'error': 'No account found with this email!'})
 
     return render(request, 'login.html')
 
