@@ -98,7 +98,7 @@ def login_view(request):
         return redirect('home')
 
     if request.method == 'POST':
-        mail = request.POST.get('username')
+        mail = request.POST.get('mail')
         password = request.POST.get('password')
 
         try:
